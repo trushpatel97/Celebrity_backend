@@ -12,9 +12,11 @@ const image = require('./controller/image');
 const db = knex({//using knex
   client: 'pg',//we will be using postgreSQL 
   connection: {
-    connectionString : process.env.DATABASE_URL,//ip address
-    ssl:true
-  }
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+    rejectUnauthorized: false,
+    },
+    },
 });
 
 const app = express();//initializing the app to use express

@@ -15,11 +15,10 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "knex": "^0.95.6",
-    "nodemon": "^2.0.12",
     "pg": "^8.6.0"
   },
   "devDependencies": {
-    "nodemon":"^2.0.12"
+    "nodemon": "^2.0.12"
   },
   "repository": {
     "type": "git",
