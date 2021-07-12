@@ -1,0 +1,42 @@
+const express = require('express'); //using express for backend
+const bodyParser = require('body-parser');//body parser is used to convert to json
+const bcrypt = require('bcrypt-nodejs');//used for hashing the passwords to make them more secure
+const cors = require('cors');//allows website communication between two different websites
+const knex = require('knex')//allows us to connect our database to the backend
+
+const register = require('./controller/register');
+const signin = require('./controller/signin');
+const profile = require('./controller/profile');
+const image = require('./controller/image');
+
+const db = knex({//using knex
+  client: 'pg',//we will be using postgreSQL 
+  connection: {
+    host : '127.0.0.1',//ip address
+    user : 'postgres',//username for PGAdmin
+    password : 'test',//password for PGAdmin
+    database : 'smart-brain'//which database we want to use
+  }
+});
+
+const app = express();//initializing the app to use express
+
+app.use(cors())//using cors to allow site communication
+app.use(bodyParser.json());//parsing to json
+
+app.get('/', (req, res)=> {//home or root of the site
+  res.send(db.users);//send over the database users
+})
+
+app.post('/signin', (req,res)=>{signin.handleSignin(req,res,db,bcrypt)})
+
+app.post('/register', (req,res)=>{register.handleRegister(req,res,db,bcrypt)})//dependency injection. Passing in things that register.js will depend on to run properly
+
+app.get('/profile/:id', (req,res)=>{profile.handleProfileGet(req,res,db)})
+
+app.put('/image', (req,res)=>{image.handleImage(req,res,db)})
+app.post('/imageurl', (req,res)=>{image.handleAPICall(req,res,db)})
+
+app.listen(3000, ()=> {//listen to port 3000
+  console.log('app is running on port 3000');
+})
