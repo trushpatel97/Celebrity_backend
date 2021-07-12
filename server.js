@@ -16,7 +16,7 @@ const db = knex({//using knex
     ssl: {
     rejectUnauthorized: false,
     }
-  }
+  },
 });
 
 const app = express();//initializing the app to use express

@@ -1,7 +1,7 @@
 const handleRegister = (req, res,db,bcrypt) => {//on the register page, handle code below
     const { email, name, password } = req.body;//get the object after submitting input boxes
     if(!email||!name||!password){
-        return res.status(400).json('Please enter all fileds')
+        return res.status(400).json('Please enter all fileds');
     }
     const hash = bcrypt.hashSync(password);//encrypt password
       db.transaction(trx => {//we use transaction because we are trying to add info to two seperate tables "login" and "users"

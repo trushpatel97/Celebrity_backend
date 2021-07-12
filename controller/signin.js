@@ -1,7 +1,7 @@
 const handleSignin = (req, res,db,bcrypt) => {//on signin we take a req and res. we use req (request) to get the body and res (response) to display user or error
     const {email,password} = req.body;
     if(!email|| !password){
-        return res.status(400).json('Please enter all fileds')
+        return res.status(400).json('Please enter all fileds');
     }
     db.select('email', 'hash').from('login')//using knex we select email and hash from login where email = email. Basically getting the unique email 
       .where('email', '=', email)
