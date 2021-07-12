@@ -12,10 +12,8 @@ const image = require('./controller/image');
 const db = knex({//using knex
   client: 'pg',//we will be using postgreSQL 
   connection: {
-    host : '127.0.0.1',//ip address
-    user : 'postgres',//username for PGAdmin
-    password : 'test',//password for PGAdmin
-    database : 'smart-brain'//which database we want to use
+    connectionString : process.env.DATABASE_URL,//ip address
+    ssl:true
   }
 });
 
@@ -37,6 +35,6 @@ app.get('/profile/:id', (req,res)=>{profile.handleProfileGet(req,res,db)})
 app.put('/image', (req,res)=>{image.handleImage(req,res,db)})
 app.post('/imageurl', (req,res)=>{image.handleAPICall(req,res,db)})
 
-app.listen(3000, ()=> {//listen to port 3000
+app.listen(process.env.PORT || 3000, ()=> {//listen to port 3000
   console.log('app is running on port 3000');
 })
