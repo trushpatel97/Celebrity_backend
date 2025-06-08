@@ -11,9 +11,9 @@
     "dev": "nodemon server.js",
     "knex:migrate": "knex migrate:latest",
     "knex:migrate:rollback": "knex migrate:rollback",
-    "build": "npm install --production=false && npm rebuild pg --update-binary",
+    "build": "npm rebuild pg --update-binary",
     "postinstall": "npm run build",
-    "render-build": "npm install --production=false && npm rebuild pg --update-binary"
+    "render-build": "npm install"
   },
   "keywords": [
     "node",
