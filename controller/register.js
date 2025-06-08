@@ -1,34 +1,60 @@
-const handleRegister = (req, res,db,bcrypt) => {//on the register page, handle code below
-    const { email, name, password } = req.body;//get the object after submitting input boxes
-    if(!email||!name||!password){
-        return res.status(400).json('Please enter all fileds');
-    }
-    const hash = bcrypt.hashSync(password);//encrypt password
-      db.transaction(trx => {//we use transaction because we are trying to add info to two seperate tables "login" and "users"
-        trx.insert({//trx is equivalent to using db. Except it allows us to insert into two tables.
-          hash: hash,
-          email: email
-        })
-        .into('login')//adding it to login
-        .returning('email')//returning the email
-        .then(loginEmail => {//with the login email, 
-          return trx('users')//return the users
-            .returning('*')//selecting all fields
-            .insert({//inserting the login email, name, and the date they created
-              email: loginEmail[0],
-              name: name,
-              joined: new Date()
-            })
-            .then(user => {
-              res.json(user[0]);//respond with the user we registered
-            })
-        })
-        .then(trx.commit)//add changes to both tables
-        .catch(trx.rollback)//if we cant add to both tables for whatever reason, revert all changes and ignore
-      })
-      .catch(err => res.status(400).json('unable to register'))//throw error
+const handleRegister = async (req, res, db, bcrypt) => {
+  const { email, name, password } = req.body;
+  
+  // Input validation is already handled by express-validator in routes
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
 
-  module.exports = {
-      handleRegister
+  try {
+    // Check if user already exists
+    const existingUser = await db('login').where({ email }).first();
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already in use' });
+    }
+
+    // Hash password with bcrypt
+    const saltRounds = 10;
+    const hash = await bcrypt.hash(password, saltRounds);
+    
+    // Use transaction to ensure data consistency
+    await db.transaction(async trx => {
+      // Insert into login table
+      const [loginEmail] = await trx('login')
+        .insert({
+          email,
+          hash,
+          created_at: db.fn.now(),
+          updated_at: db.fn.now()
+        }, ['email']);
+
+      // Insert into users table
+      const [user] = await trx('users')
+        .insert({
+          name,
+          email: loginEmail.email,
+          created_at: db.fn.now(),
+          updated_at: db.fn.now()
+        }, ['id', 'name', 'email', 'joined']);
+
+      // Return user data (without sensitive info)
+      res.status(201).json({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        joined: user.joined
+      });
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ 
+      error: 'Registration failed',
+      message: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
+};
+
+module.exports = {
+  handleRegister
+};

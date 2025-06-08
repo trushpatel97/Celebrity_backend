@@ -1,26 +1,58 @@
-const handleSignin = (req, res,db,bcrypt) => {//on signin we take a req and res. we use req (request) to get the body and res (response) to display user or error
-    const {email,password} = req.body;
-    if(!email|| !password){
-        return res.status(400).json('Please enter all fileds');
-    }
-    db.select('email', 'hash').from('login')//using knex we select email and hash from login where email = email. Basically getting the unique email 
-      .where('email', '=', email)
-      .then(data => {//gets data
-        const isValid = bcrypt.compareSync(password, data[0].hash);//compare the password in the body to the hashed version
-        if (isValid) {//if match
-          return db.select('*').from('users')//return all fields from user and its values  where the email matches
-            .where('email', '=', email)
-            .then(user => {
-              res.json(user[0])//respond with the user. We use [0] because there can only be one user that shows up as a result
-            })
-            .catch(err => res.status(400).json('unable to get user'))//if there is a problem display error
-        } else {
-          res.status(400).json('wrong credentials')//show that you tried to access the wrong user
-        }
-      })
-      .catch(err => res.status(400).json('wrong credentials'))//same thing 
+const handleSignin = async (req, res, db, bcrypt) => {
+  const { email, password } = req.body;
+  
+  // Input validation is already handled by express-validator in routes
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
 
-  module.exports = {
-    handleSignin
-}
+  try {
+    // Find user login credentials
+    const loginData = await db('login')
+      .select('hash')
+      .where('email', '=', email)
+      .first();
+
+    if (!loginData) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Compare password with hash
+    const isValid = await bcrypt.compare(password, loginData.hash);
+    
+    if (!isValid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Get user data
+    const user = await db('users')
+      .select('id', 'name', 'email', 'joined', 'entries')
+      .where('email', '=', email)
+      .first();
+
+    if (!user) {
+      return res.status(500).json({ error: 'User not found' });
+    }
+
+    // Return user data (without sensitive info)
+    res.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      joined: user.joined,
+      entries: user.entries || 0
+    });
+
+  } catch (error) {
+    console.error('Signin error:', error);
+    res.status(500).json({ 
+      error: 'Signin failed',
+      message: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+};
+
+module.exports = {
+  handleSignin
+};
