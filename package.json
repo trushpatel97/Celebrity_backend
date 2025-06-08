@@ -11,7 +11,8 @@
     "dev": "nodemon server.js",
     "knex:migrate": "knex migrate:latest",
     "knex:migrate:rollback": "knex migrate:rollback",
-    "render-postbuild": "npm install && npm run knex:migrate"
+    "render-postbuild": "npm install && npm run knex:migrate",
+    "render-build": "npm install pg --save && npm install"
   },
   "keywords": [
     "node",
