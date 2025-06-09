@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
 const knex = require('knex');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 // Import controllers
 const register = require('./controller/register');
