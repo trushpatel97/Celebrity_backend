@@ -3,17 +3,11 @@
   "version": "1.0.0",
   "description": "Backend for Celebrity Recognition App",
   "main": "server.js",
-  "engines": {
-    "node": "18.x"
-  },
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
     "knex:migrate": "knex migrate:latest",
-    "knex:migrate:rollback": "knex migrate:rollback",
-    "build": "npm rebuild pg --update-binary",
-    "postinstall": "npm run build",
-    "render-build": "npm install"
+    "knex:migrate:rollback": "knex migrate:rollback"
   },
   "keywords": [
     "node",
@@ -24,17 +18,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "clarifai": "^2.9.1",
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.18.2",
-    "express-rate-limit": "^7.1.5",
-    "express-validator": "^7.2.1",
-    "helmet": "^7.1.0",
+    "express-rate-limit": "^6.9.0",
+    "helmet": "^7.0.0",
     "knex": "^2.5.1",
-    "pg": "8.7.3",
-    "pg-connection-string": "^2.6.0"
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
