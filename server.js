@@ -5,7 +5,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
 const knex = require('knex');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
 // Import controllers
 const register = require('./controller/register');
@@ -22,42 +22,43 @@ const app = express();
 
 // Security middleware
 app.use(helmet());
-
-// Enable CORS for all routes
-app.use(cors({
-  origin: [
-    'https://celebrity-look-alike.vercel.app',  // Production frontend
-    'http://localhost:3000'                     // Local development
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-    'Accept',
-    'Origin',
-    'Access-Control-Allow-Credentials'
-  ],
-  exposedHeaders: ['Content-Range', 'X-Content-Range'],
-  maxAge: 600,
-  optionsSuccessStatus: 200
+app.use(cors((req, callback) => {
+  let corsOptions;
+  const allowedOriginsEnv = process.env.ALLOWED_ORIGINS;
+  const allowedOrigins = allowedOriginsEnv ? allowedOriginsEnv.split(',') : [];
+  if (allowedOrigins.includes('*') || (req.header('Origin') && allowedOrigins.includes(req.header('Origin')))) {
+    corsOptions = { origin: true }; // Reflects the request origin
+  } else {
+    corsOptions = { origin: false }; // Disallow CORS for this origin
+  }
+  corsOptions.credentials = true;
+  corsOptions.methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'];
+  corsOptions.allowedHeaders = ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'];
+  corsOptions.exposedHeaders = ['Content-Range', 'X-Content-Range'];
+  corsOptions.maxAge = 600;
+  corsOptions.optionsSuccessStatus = 204; // Use 204 for OPTIONS success status as per best practice
+  callback(null, corsOptions); // Callback expects two params: error and options
 }));
 
-// Handle preflight requests
-app.options('*', cors());
-
-// Additional CORS headers
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (['https://celebrity-look-alike.vercel.app', 'http://localhost:3000'].includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
+// Explicitly handle OPTIONS requests (preflight)
+// This should come before your routes
+app.options('*', cors((req, callback) => {
+  let corsOptions;
+  const allowedOriginsEnv = process.env.ALLOWED_ORIGINS;
+  const allowedOrigins = allowedOriginsEnv ? allowedOriginsEnv.split(',') : [];
+  if (allowedOrigins.includes('*') || (req.header('Origin') && allowedOrigins.includes(req.header('Origin')))) {
+    corsOptions = { origin: true };
+  } else {
+    corsOptions = { origin: false };
   }
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  next();
-});
+  corsOptions.credentials = true;
+  corsOptions.methods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'];
+  corsOptions.allowedHeaders = ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'];
+  corsOptions.exposedHeaders = ['Content-Range', 'X-Content-Range'];
+  corsOptions.maxAge = 600;
+  corsOptions.optionsSuccessStatus = 204;
+  callback(null, corsOptions);
+}));
 
 // Rate limiting
 const limiter = rateLimit({
@@ -65,10 +66,6 @@ const limiter = rateLimit({
   max: process.env.RATE_LIMIT_MAX || 100 // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
-
-// Body parsing
-app.use(express.json({ limit: '10kb' }));
-app.use(express.urlencoded({ extended: true, limit: '10kb' }));
 
 // Body parsing
 app.use(express.json({ limit: '10kb' }));
