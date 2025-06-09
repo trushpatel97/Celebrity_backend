@@ -4,7 +4,7 @@
   "description": "Backend for Celebrity Recognition App",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "npm run knex:migrate && node server.js",
     "dev": "nodemon server.js",
     "knex:migrate": "knex migrate:latest",
     "knex:migrate:rollback": "knex migrate:rollback"
