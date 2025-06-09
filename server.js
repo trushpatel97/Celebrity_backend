@@ -5,6 +5,10 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
 const knex = require('knex');
+
+console.log('---- STARTUP DIAGNOSTICS ----');
+console.log('Initial process.env.NODE_ENV:', process.env.NODE_ENV);
+console.log('Initial process.env.DATABASE_URL (first 20 chars):', process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 20) : 'NOT SET');
 const bcrypt = require('bcrypt');
 
 // Import controllers
@@ -16,7 +20,10 @@ const image = require('./controller/image');
 // Initialize Knex with configuration based on environment
 const environment = process.env.NODE_ENV || 'development';
 const config = require('./knexfile')[environment];
+console.log('Selected Knex environment:', environment);
+console.log('Knex config being used:', JSON.stringify(config, null, 2));
 const db = knex(config);
+console.log('---- END STARTUP DIAGNOSTICS ----');
 
 const app = express();
 
