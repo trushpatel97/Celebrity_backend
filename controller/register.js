@@ -1,3 +1,5 @@
+const { body, validationResult } = require('express-validator');
+
 const handleRegister = async (req, res, db, bcrypt) => {
   const { email, name, password } = req.body;
   
