@@ -1,6 +1,6 @@
 const Clarifai = require('clarifai')
 const app = new Clarifai.App({
-    apiKey: "¯\_(ツ)_/¯",
+    apiKey: "de936a5b426743f1b5c5bbdd78f441ff",
 });
 const handleAPICall=(req,res)=>{
     app.models.predict(Clarifai.CELEBRITY_MODEL,req.body.input)
