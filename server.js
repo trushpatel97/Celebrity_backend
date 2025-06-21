@@ -29,25 +29,7 @@ db.any('SELECT NOW()')
     console.error('Query error:', error);
   });
 
-const knex = require('knex')({
-  client: 'pg',
-  connection: process.env.DATABASE_URL,
-  debug: true, // Enable detailed logging
-  log: {
-    warn(message) {
-      console.warn('Knex Warning:', message);
-    },
-    error(message) {
-      console.error('Knex Error:', message);
-    },
-    deprecate(message) {
-      console.log('Knex Deprecation:', message);
-    },
-    debug(message) {
-      console.log('Knex Debug:', message);
-    },
-  },
-});//allows us to connect our database to the backend
+
 const register = require('./controller/register');
 const signin = require('./controller/signin');
 const profile = require('./controller/profile');
