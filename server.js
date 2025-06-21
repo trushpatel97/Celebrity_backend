@@ -23,7 +23,12 @@ const app = express();//initializing the app to use express
 
 app.use(cors())//using cors to allow site communication
 app.use(bodyParser.json());//parsing to json
-
+const allowedOrigins = ['http://localhost:3000', 'https://celebrityalike-aa43d85f8ff5.herokuapp.com'];
+app.use(cors({
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.get('/', (req, res)=> {//home or root of the site
   res.send(db.users);//send over the database users
 })
