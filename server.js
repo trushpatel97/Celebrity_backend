@@ -23,11 +23,22 @@ const db = knex({//using knex
 
 const app = express();//initializing the app to use express
 
-app.use(cors())//using cors to allow site communication
+const allowedOrigins = [
+  'https://celebrity-lookalike.onrender.com',
+  'http://localhost:3000'
+];
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+}));
+app.options('*', cors());
+
 app.use(bodyParser.json());//parsing to json
 
+// Health check root route
 app.get('/', (req, res) => {
-  res.send(db.users);//when we go to the root, we will get the users from the database
+  res.send('Backend is running!');
 })
 
 app.post('/signin', (req,res)=>{signin.handleSignin(req,res,db,bcrypt)})
