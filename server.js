@@ -1,23 +1,20 @@
+require('dotenv').config();// Load environment variables from .env file
+
 const express = require('express'); //using express for backend
 const bodyParser = require('body-parser');//body parser is used to convert to json
 const bcrypt = require('bcrypt-nodejs');//used for hashing the passwords to make them more secure
 const cors = require('cors');//allows website communication between two different websites
-const knex = require('knex')//allows us to connect our database to the backend
-
+console.log('DATABASE_URL:', process.env.DATABASE_URL);
+const knex = require('knex')({
+  client: 'pg',
+  connection: process.env.DATABASE_URL,
+});//allows us to connect our database to the backend
 const register = require('./controller/register');
 const signin = require('./controller/signin');
 const profile = require('./controller/profile');
 const image = require('./controller/image');
 
-const db = knex({//using knex
-  client: 'pg',//we will be using postgreSQL 
-  connection: {
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-    rejectUnauthorized: false,
-    }
-  },
-});
+// Use process.env.CLARIFAI_PAT wherever needed for Clarifai API integration.
 
 const app = express();//initializing the app to use express
 

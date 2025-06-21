@@ -10,7 +10,7 @@
   "author": "",
   "engines": {
     "node": "16.x"
-  }, 
+  },
   "license": "ISC",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
@@ -21,7 +21,7 @@
     "express": "^4.17.1",
     "knex": "^0.21.21",
     "nodemon": "^2.0.4",
-    "pg": "^8.16.2"
+    "pg": "^8.11.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
