@@ -21,7 +21,8 @@
     "express": "^4.17.1",
     "knex": "^0.21.21",
     "nodemon": "^2.0.4",
-    "pg": "^8.11.0"
+    "pg": "^8.11.0",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

@@ -1,5 +1,5 @@
-require('dotenv').config();// Load environment variables from .env file
-
+require('dotenv').config({ debug: true });// Load environment variables from .env file
+const winston = require('winston');
 const express = require('express'); //using express for backend
 const bodyParser = require('body-parser');//body parser is used to convert to json
 const bcrypt = require('bcrypt-nodejs');//used for hashing the passwords to make them more secure
@@ -8,6 +8,21 @@ console.log('DATABASE_URL:', process.env.DATABASE_URL);
 const knex = require('knex')({
   client: 'pg',
   connection: process.env.DATABASE_URL,
+  debug: true, // Enable detailed logging
+  log: {
+    warn(message) {
+      console.warn('Knex Warning:', message);
+    },
+    error(message) {
+      console.error('Knex Error:', message);
+    },
+    deprecate(message) {
+      console.log('Knex Deprecation:', message);
+    },
+    debug(message) {
+      console.log('Knex Debug:', message);
+    },
+  },
 });//allows us to connect our database to the backend
 const register = require('./controller/register');
 const signin = require('./controller/signin');
@@ -45,3 +60,17 @@ app.listen(process.env.PORT || 3000, ()=> {//listen to port 3000
   console.log('app is running on port 3000');
 })
 
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console(),
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+  ],
+});
+
+logger.info('Application started');
+logger.error('An error occurred');
