@@ -27,7 +27,7 @@ app.use(cors())//using cors to allow site communication
 app.use(bodyParser.json());//parsing to json
 
 app.get('/', (req, res) => {
-  res.send('Backend is running!');
+  res.send(db.users);//when we go to the root, we will get the users from the database
 })
 
 app.post('/signin', (req,res)=>{signin.handleSignin(req,res,db,bcrypt)})
