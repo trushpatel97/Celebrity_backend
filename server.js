@@ -37,9 +37,10 @@ app.get('/profile/:id', (req,res)=>{profile.handleProfileGet(req,res,db)})
 app.put('/image', (req,res)=>{image.handleImage(req,res,db)})
 app.post('/imageurl', (req,res)=>{image.handleAPICall(req,res,db)})
 
-app.listen(process.env.PORT || 3000, ()=> {//listen to port 3000
-  console.log('app is running on port 3000');
-})
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`app is running on port ${PORT}`);
+});
 app.on('error', (err) => {
   console.error('Server error:', err);
 });
