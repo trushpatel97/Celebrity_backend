@@ -8,7 +8,7 @@ const handleAPICall=(req,res)=>{
         res.json(data);
     })
     .catch(err=>res.status(400).json('unable to  work with API'))
-}
+} 
 const handleImage = (req, res,db) => {//updating the counter so it is put
     const { id } = req.body;//we get the entries from the body
     db('users').where('id', '=', id)//find where id matches in the users table
