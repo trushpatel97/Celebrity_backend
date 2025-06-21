@@ -29,6 +29,8 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
+// Handle preflight requests
+app.options('*', cors());
 app.get('/', (req, res)=> {//home or root of the site
   res.send(db.users);//send over the database users
 })
