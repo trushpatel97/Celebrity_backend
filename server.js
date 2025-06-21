@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');//body parser is used to convert to js
 const bcrypt = require('bcrypt-nodejs');//used for hashing the passwords to make them more secure
 const cors = require('cors');//allows website communication between two different websites
 console.log('DATABASE_URL:', process.env.DATABASE_URL);
-
+const axios = require('axios');
 // Initialize the database connection
 const db = pgp(process.env.DATABASE_URL);
 
