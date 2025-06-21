@@ -5,6 +5,37 @@ const bodyParser = require('body-parser');//body parser is used to convert to js
 const bcrypt = require('bcrypt-nodejs');//used for hashing the passwords to make them more secure
 const cors = require('cors');//allows website communication between two different websites
 console.log('DATABASE_URL:', process.env.DATABASE_URL);
+const { Client } = require('pg');
+
+// Create a new client instance
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false, // Required for Render or other hosted databases
+  },
+});
+
+// Connect to the database
+client.connect()
+  .then(() => {
+    console.log('Connected to the database successfully');
+  })
+  .catch((error) => {
+    console.error('Database connection error:', error);
+  });
+
+// Example query
+client.query('SELECT NOW()')
+  .then((result) => {
+    console.log('Query result:', result.rows);
+  })
+  .catch((error) => {
+    console.error('Query error:', error);
+  })
+  .finally(() => {
+    client.end(); // Close the connection
+  });
+
 const knex = require('knex')({
   client: 'pg',
   connection: process.env.DATABASE_URL,
