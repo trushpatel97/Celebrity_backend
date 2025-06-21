@@ -1,8 +1,8 @@
-const handleRegister = (req, res,db,bcrypt) => {//on the register page, handle code below
+const handleRegister = (req, res, db, bcrypt) => {//on the register page, handle code below
   console.log('Register request body:', req.body);
   const { email, name, password } = req.body;//get the object after submitting input boxes
     if(!email||!name||!password){
-        return res.status(400).json('Please enter all fileds');
+        return res.status(400).json({ error: 'Please enter all fields' });
     }
     const hash = bcrypt.hashSync(password);//encrypt password
       db.transaction(trx => {//we use transaction because we are trying to add info to two seperate tables "login" and "users"
@@ -21,13 +21,22 @@ const handleRegister = (req, res,db,bcrypt) => {//on the register page, handle c
               joined: new Date()
             })
             .then(user => {
-              res.json(user[0]);//respond with the user we registered
-            })
+              if (user && user[0] && user[0].id) {
+                console.log('Register success, sending user:', user[0]);
+                res.json(user[0]);//respond with the user we registered
+              } else {
+                console.error('Register failed, user object missing id:', user);
+                res.status(400).json({ error: 'Registration failed, user not created' });
+              }
+            });
         })
         .then(trx.commit)//add changes to both tables
         .catch(trx.rollback)//if we cant add to both tables for whatever reason, revert all changes and ignore
       })
-      .catch(err => res.status(400).json('unable to register'))//throw error
+      .catch(err => {
+        console.error('Register error:', err);
+        res.status(400).json({ error: 'unable to register', details: err.toString() });
+      });//throw error
   }
 
   module.exports = {
