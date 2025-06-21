@@ -24,8 +24,8 @@ const app = express();//initializing the app to use express
 app.use(cors())//using cors to allow site communication
 app.use(bodyParser.json());//parsing to json
 
-app.get('/', (req, res)=> {//home or root of the site
-  res.send(db.users);//send over the database users
+app.get('/', (req, res) => {
+  res.send('Backend is running!');
 })
 
 app.post('/signin', (req,res)=>{signin.handleSignin(req,res,db,bcrypt)})
