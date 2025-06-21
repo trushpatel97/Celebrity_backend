@@ -9,10 +9,12 @@ const signin = require('./controller/signin');
 const profile = require('./controller/profile');
 const image = require('./controller/image');
 
+require('dotenv').config();
+
 const db = knex({//using knex
   client: 'pg',//we will be using postgreSQL 
   connection: {
-    connectionString: "postgresql://celebritydb_user:vISaM0dKJZ7Fz42pSyihw9iXF5tnxom3@dpg-d1b0irodl3ps73e5l2n0-a/celebritydb",
+    connectionString: process.env.DATABASE_URL,
     ssl: {
     rejectUnauthorized: false,
     }
