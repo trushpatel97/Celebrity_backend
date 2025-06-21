@@ -1,5 +1,6 @@
 const handleRegister = (req, res,db,bcrypt) => {//on the register page, handle code below
-    const { email, name, password } = req.body;//get the object after submitting input boxes
+  console.log('Register request body:', req.body);
+  const { email, name, password } = req.body;//get the object after submitting input boxes
     if(!email||!name||!password){
         return res.status(400).json('Please enter all fileds');
     }
