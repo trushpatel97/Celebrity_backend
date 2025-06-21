@@ -40,4 +40,6 @@ app.post('/imageurl', (req,res)=>{image.handleAPICall(req,res,db)})
 app.listen(process.env.PORT || 3000, ()=> {//listen to port 3000
   console.log('app is running on port 3000');
 })
-
+app.on('error', (err) => {
+  console.error('Server error:', err);
+});
