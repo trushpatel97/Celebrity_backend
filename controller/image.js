@@ -13,6 +13,7 @@ metadata.set('authorization', 'Key ' + PAT);
 
 const handleAPICall = (req, res) => {
     const imageUrl = req.body.input;
+    console.log('Clarifai image URL:', imageUrl);
     stub.PostModelOutputs(
         {
             user_app_id: {
@@ -28,16 +29,21 @@ const handleAPICall = (req, res) => {
         metadata,
         (err, response) => {
             if (err) {
+                console.error('Clarifai API error:', err);
                 return res.status(400).json({ error: 'Clarifai API error', details: err.toString() });
             }
+            console.log('Clarifai raw response:', JSON.stringify(response, null, 2));
             if (response.status.code !== 10000) {
+                console.error('Clarifai model error:', response.status);
                 return res.status(400).json({ error: 'Post model outputs failed', details: response.status.description });
             }
             const output = response.outputs[0];
             // Check for regions and concepts
             if (output.data && Array.isArray(output.data.regions) && output.data.regions.length > 0) {
+                console.log('Clarifai regions detected:', output.data.regions.length);
                 return res.json(output);
             } else {
+                console.warn('No face or celebrity detected by Clarifai.');
                 return res.status(200).json({ error: 'No face or celebrity detected', regions: [] });
             }
         }
