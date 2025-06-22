@@ -33,7 +33,13 @@ const handleAPICall = (req, res) => {
             if (response.status.code !== 10000) {
                 return res.status(400).json({ error: 'Post model outputs failed', details: response.status.description });
             }
-            res.json(response.outputs[0]);
+            const output = response.outputs[0];
+            // Check for regions and concepts
+            if (output.data && Array.isArray(output.data.regions) && output.data.regions.length > 0) {
+                return res.json(output);
+            } else {
+                return res.status(200).json({ error: 'No face or celebrity detected', regions: [] });
+            }
         }
     );
 };
