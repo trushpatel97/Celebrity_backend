@@ -42,9 +42,12 @@ const handleAPICall = (req, res) => {
             if (output.data && Array.isArray(output.data.regions) && output.data.regions.length > 0) {
                 console.log('Clarifai regions detected:', output.data.regions.length);
                 return res.json(output);
+            } else if (output.data && Array.isArray(output.data.concepts) && output.data.concepts.length > 0) {
+                console.log('Clarifai concepts detected (no regions):', output.data.concepts.length);
+                return res.json({ concepts: output.data.concepts });
             } else {
                 console.warn('No face or celebrity detected by Clarifai.');
-                return res.status(200).json({ error: 'No face or celebrity detected', regions: [] });
+                return res.status(200).json({ error: 'No face or celebrity detected', regions: [], concepts: [] });
             }
         }
     );
